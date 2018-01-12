@@ -24,4 +24,11 @@ public class Circle {
 	public void setRadius(double r) {
 		this.radius = r;
 	}
+	
+	public void printAttributes() {
+		System.out.printf("Coords: (%.0f, %.0f)\n", this.x, this.y);
+		System.out.printf("Radius: %.2f\n", this.radius);
+		System.out.printf("Circumference: %.2f\n", this.circumference());
+		System.out.printf("Area: %.2f\n", this.area());
+	}
 }
