@@ -7,7 +7,7 @@
 // properly formatted name.
 
 public class FullName {
-	public String title, first, middle, last;
+	private String title, first, middle, last;
 	
 	public FullName() {
 		this.title = "";

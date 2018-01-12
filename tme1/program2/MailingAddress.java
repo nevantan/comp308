@@ -1,6 +1,6 @@
 public class MailingAddress {
-	public FullName name;
-	public String street, city, province, postal;
+	private FullName name;
+	private String street, city, province, postal;
 	
 	public MailingAddress() {
 		this.name = new FullName();
