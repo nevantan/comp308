@@ -31,4 +31,13 @@ public class Circle {
 		System.out.printf("Circumference: %.2f\n", this.circumference());
 		System.out.printf("Area: %.2f\n", this.area());
 	}
+	
+	public boolean isInside(double x, double y) {
+		return Math.hypot(this.x - x, this.y - y) <= this.radius;
+	}
+	
+	public void move(int x, int y) {
+		this.x += x;
+		this.y += y;
+	}
 }

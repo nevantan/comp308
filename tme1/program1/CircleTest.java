@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-public class TestCircle {
+public class CircleTest {
 	@Test
 	public void defaultConstructor() {
 		Circle circle = new Circle();
@@ -48,5 +48,29 @@ public class TestCircle {
 		Circle circle = new Circle(0, 0, 5);
 		circle.printAttributes();
 		assertEquals("Coords: (0, 0)\nRadius: 5.00\nCircumference: 31.42\nArea: 78.54\n", sysOut.toString());
+	}
+	
+	@Test
+	public void testIsInside() {
+		Circle circle = new Circle(0, 0, 5);
+		assertEquals(true, circle.isInside(2, 2));
+	}
+	
+	@Test
+	public void testIsNotInside() {
+		Circle circle = new Circle(0, 0, 5);
+		assertEquals(false, circle.isInside(10, 10));
+	}
+	
+	@Test
+	public void testMove() {
+		Circle circle = new Circle(0, 0, 5);
+		circle.move(10, 10);
+		assertEquals(10, circle.x, 0);
+		assertEquals(10, circle.y, 0);
+		
+		circle.move(-2, -2);
+		assertEquals(8, circle.x, 0);
+		assertEquals(8, circle.y, 0);
 	}
 }
