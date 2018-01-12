@@ -7,25 +7,23 @@
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CircleTest {
 	@Test
 	public void defaultConstructor() {
 		Circle circle = new Circle();
-		assertEquals(0, circle.x, 0);
-		assertEquals(0, circle.y, 0);
-		assertEquals(5, circle.radius, 0);
+		assertTrue(circle instanceof Circle);
 	}
 	
 	@Test
 	public void mainConstructor() {
 		Circle circle = new Circle(10, 10, 15);
-		assertEquals(10, circle.x, 0);
-		assertEquals(10, circle.y, 0);
-		assertEquals(15, circle.radius, 0);
+		assertTrue(circle instanceof Circle);
 	}
 	
 	@Test
@@ -41,10 +39,13 @@ public class CircleTest {
 	}
 	
 	@Test
-	public void correctlySetRadius() {
+	public void correctlySetRadius() throws NoSuchFieldException, IllegalAccessException {
 		Circle circle = new Circle(0, 0, 5);
 		circle.setRadius(10);
-		assertEquals(10, circle.radius, 0);
+		
+		final Field field = circle.getClass().getDeclaredField("radius");
+		field.setAccessible(true);
+		assertEquals(10, field.getDouble(circle), 0);
 	}
 	
 	@Test
@@ -70,14 +71,20 @@ public class CircleTest {
 	}
 	
 	@Test
-	public void testMove() {
+	public void testMove() throws NoSuchFieldException, IllegalAccessException {
 		Circle circle = new Circle(0, 0, 5);
 		circle.move(10, 10);
-		assertEquals(10, circle.x, 0);
-		assertEquals(10, circle.y, 0);
+		
+		final Field fieldX = circle.getClass().getDeclaredField("x");
+		fieldX.setAccessible(true);
+		final Field fieldY = circle.getClass().getDeclaredField("y");
+		fieldY.setAccessible(true);
+		
+		assertEquals(10, fieldX.getDouble(circle), 0);
+		assertEquals(10, fieldY.getDouble(circle), 0);
 		
 		circle.move(-2, -2);
-		assertEquals(8, circle.x, 0);
-		assertEquals(8, circle.y, 0);
+		assertEquals(8, fieldX.getDouble(circle), 0);
+		assertEquals(8, fieldY.getDouble(circle), 0);
 	}
 }

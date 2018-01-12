@@ -9,7 +9,7 @@ public class Circle {
 	// x - The x-coordinate of the center point of the circle
 	// y - The y-coordinate of the center point of the circle
 	// radius - The radius of the circle
-	public double x, y, radius;
+	private double x, y, radius;
 	
 	// Default constructor, sets reasonable defaults
 	public Circle() {
