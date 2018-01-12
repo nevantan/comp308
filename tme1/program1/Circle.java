@@ -16,4 +16,8 @@ public class Circle {
 	public double circumference() {
 		return 2.0 * Math.PI * this.radius;
 	}
+	
+	public double area() {
+		return Math.PI * Math.pow(this.radius, 2);
+	}
 }
