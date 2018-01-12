@@ -23,4 +23,10 @@ public class TestCircle {
 		Circle circle = new Circle(0, 0, 5);
 		assertEquals(31.42, circle.circumference(), 0.01);
 	}
+	
+	@Test
+	public void correctArea() {
+		Circle circle = new Circle(0, 0, 5);
+		assertEquals(78.54, circle.area(), 0.01);
+	}
 }
