@@ -20,4 +20,8 @@ public class Circle {
 	public double area() {
 		return Math.PI * Math.pow(this.radius, 2);
 	}
+	
+	public void setRadius(double r) {
+		this.radius = r;
+	}
 }
