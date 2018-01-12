@@ -1,3 +1,10 @@
+// File: CircleTest.java
+// Author: Nevan Tan <nevan@tanclan.ca>
+// StudentID: 3099925
+// Date: 2018-01-12
+// CircleTest is a JUnit 4 test class for Circle.java. It includes unit test
+// methods for each method defined in Circle.
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
