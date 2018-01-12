@@ -17,4 +17,10 @@ public class TestCircle {
 		assertEquals(10, circle.y, 0);
 		assertEquals(15, circle.radius, 0);
 	}
+	
+	@Test
+	public void correctCircumference() {
+		Circle circle = new Circle(0, 0, 5);
+		assertEquals(31.42, circle.circumference(), 0.01);
+	}
 }

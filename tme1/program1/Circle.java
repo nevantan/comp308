@@ -12,4 +12,8 @@ public class Circle {
 		this.y = y;
 		this.radius = radius;
 	}
+	
+	public double circumference() {
+		return 2.0 * Math.PI * this.radius;
+	}
 }
