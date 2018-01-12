@@ -29,4 +29,11 @@ public class TestCircle {
 		Circle circle = new Circle(0, 0, 5);
 		assertEquals(78.54, circle.area(), 0.01);
 	}
+	
+	@Test
+	public void correctlySetRadius() {
+		Circle circle = new Circle(0, 0, 5);
+		circle.setRadius(10);
+		assertEquals(10, circle.radius, 0);
+	}
 }
