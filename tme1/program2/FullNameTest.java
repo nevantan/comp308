@@ -25,4 +25,22 @@ public class FullNameTest {
 		assertEquals("Theodore", name.middle);
 		assertEquals("Doe", name.last);
 	}
+	
+	@Test
+	public void fullToString() {
+		FullName name = new FullName("Mr.", "John", "Theodore", "Doe");
+		assertEquals("Mr. John Theodore Doe", name.toString());
+	}
+	
+	@Test
+	public void noTitleToString() {
+		FullName name = new FullName("", "John", "Theodore", "Doe");
+		assertEquals("John Theodore Doe", name.toString());
+	}
+	
+	@Test
+	public void noMiddleToString() {
+		FullName name = new FullName("Mr.", "John", "", "Doe");
+		assertEquals("Mr. John Doe", name.toString());
+	}
 }
