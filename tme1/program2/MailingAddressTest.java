@@ -1,3 +1,9 @@
+// File: MailingAddressTest.java
+// Author: Nevan Tan <nevan@tanclan.ca>
+// StudentID: 3099925
+// Date: 2018-01-12
+// MailingAddressTest is a JUnit 4 test class for MailingAddress.java.
+
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

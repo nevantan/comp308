@@ -2,7 +2,7 @@
 // Author: Nevan Tan <nevan@tanclan.ca>
 // StudentID: 3099925
 // Date: 2018-01-12
-// FullNameTest is a unit test class for FullName.java.
+// FullNameTest is a JUnit 4 test class for FullName.java.
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

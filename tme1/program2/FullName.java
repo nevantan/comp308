@@ -7,8 +7,13 @@
 // properly formatted name.
 
 public class FullName {
+	// title - Title to address the individual by (e.g. Mr., Mrs., Ms., etc.)
+	// first - The individual's first name
+	// middle - The individual's middle name
+	// last - The individual's last name
 	private String title, first, middle, last;
 	
+	// Default contructor
 	public FullName() {
 		this.title = "";
 		this.first = "";
@@ -16,6 +21,7 @@ public class FullName {
 		this.last = "";
 	}
 	
+	// Primary constructor to populate all fields
 	public FullName(String title, String first, String middle, String last) {
 		this.title = title;
 		this.first = first;
@@ -23,6 +29,7 @@ public class FullName {
 		this.last = last;
 	}
 	
+	// Override toString method - returns the full name as a formatted string
 	public String toString() {
 		String full = "";
 		if(this.title.length() > 0) full += this.title;
