@@ -51,6 +51,9 @@ more precise at the cost of requiring twice as many bits of memory.
 types in [Section 4.2](https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.2).
 
 ## Unit 3: Section 1, Learning Objective 1, Question 1
+
+**Prompt:** What is the precedence among arithmetic operators?
+
 Java operators have 16 levels of precedence where higher levels are resolved before lower
 ones. Within levels, operators are resolved left-to-right. The 16 levels are as follows:
 
