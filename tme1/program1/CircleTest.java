@@ -4,6 +4,12 @@
 // Date: 2018-01-12
 // CircleTest is a JUnit 4 test class for Circle.java. It includes unit test
 // methods for each method defined in Circle.
+// 
+// Compile:
+//  javac -cp .:junit-4.12.jar CircleTest.java
+// 
+// Run:
+//  java -cp .:junit-4.12.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore CircleTest
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -46,6 +52,16 @@ public class CircleTest {
 		final Field field = circle.getClass().getDeclaredField("radius");
 		field.setAccessible(true);
 		assertEquals(10, field.getDouble(circle), 0);
+	}
+	
+	@Test
+	public void correctlyLimitRadius() throws NoSuchFieldException, IllegalAccessException {
+		Circle circle = new Circle(0, 0, 5);
+		circle.setRadius(55);
+		
+		final Field field = circle.getClass().getDeclaredField("radius");
+		field.setAccessible(true);
+		assertEquals(50, field.getDouble(circle), 0);
 	}
 	
 	@Test

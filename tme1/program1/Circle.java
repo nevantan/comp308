@@ -1,28 +1,49 @@
-// File: Circle.java
-// Author: Nevan Tan <nevan@tanclan.ca>
-// StudentID: 3099925
-// Date: 2018-01-12
-// Circle is a utility class that stores the circle's coordinates and radius
-// along with various methods to calculate values and modify stored values.
+/* 
+ * File: Circle.java
+ * Author: Nevan Tan <nevan@tanclan.ca>
+ * StudentID: 3099925
+ * Date: 2018-01-12
+ * Circle is a utility class that stores the circle's coordinates and radius
+ * along with various methods to calculate values and modify stored values.
+ * 
+ * Problem/Requirements:
+ * 	Write a class called Circle which has the following methods:
+ * 	- public Circle() - supplies default values for coordinates and radius
+ * 	- public Circle(double x, double y, double radius)
+ * 	- public double circumference() - returns the circumference of the circle
+ * 	- public double area() - returns the area of the circle
+ * 	- public void setRadius(double r) - sets the radius to min(MAX_RADIUS, r)
+ * 	- public void printAttributes() - prints coords, radius, circumference, and area
+ * 	- public boolean isInside(double x, double y) - returns true if provided point is within the circle
+ * 	- public void move(int x, int y) - moves the origin by the specified amount
+ * 
+ * Compile:
+ * 	javac Circle.java
+ * 
+ * Run:
+ * 	N/A (No entry point)
+ */ 
 
 public class Circle {
 	// x - The x-coordinate of the center point of the circle
 	// y - The y-coordinate of the center point of the circle
 	// radius - The radius of the circle
+	// MAX_RADIUS - The maximum radious allowed for the circle
 	private double x, y, radius;
+	private double MAX_RADIUS = 50;
 	
 	// Default constructor, sets reasonable defaults
 	public Circle() {
 		this.x = 0;
 		this.y = 0;
-		this.radius = 5;
+		this.setRadius(5);
 	}
 	
 	// Secondary constructor to set values on initialization
 	public Circle(double x, double y, double radius) {
 		this.x = x;
 		this.y = y;
-		this.radius = radius;
+		this.setRadius(radius);
 	}
 	
 	// Returns the circumference of the circle
@@ -35,9 +56,9 @@ public class Circle {
 		return Math.PI * Math.pow(this.radius, 2);
 	}
 	
-	// Sets the radius of the circle to the provided value
+	// Sets the radius of the circle to the provided value, limited to MAX_RADIUS
 	public void setRadius(double r) {
-		this.radius = r;
+		this.radius = r > this.MAX_RADIUS ? this.MAX_RADIUS : r;
 	}
 	
 	// Prints the attributes of the circle to the standard output
