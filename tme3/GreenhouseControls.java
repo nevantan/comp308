@@ -150,11 +150,19 @@ public class GreenhouseControls extends Controller {
     // An example of an action() that inserts a
     // new one of itself into the event list:
     public class Bell extends Event {
-        public Bell(long delayTime, int rings) {
+    	private int rings;
+    	private int rung;
+    	
+        public Bell(long delayTime, int rings, int rung) {
             super(delayTime);
+            this.rings = rings;
+            this.rung = rung;
         }
         public void action() {
-            // nothing to do
+			this.rung++;
+			if(this.rung <= this.rings) {
+				addEvent(new Bell(this.delayTime, this.rings, this.rung));
+			}
         }
         public String toString() {
             return "Bing!";
