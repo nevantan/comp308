@@ -33,6 +33,7 @@
 
 import java.io.*;
 import java.util.Calendar;
+import java.util.Scanner;
 import tme3.*;
 
 public class GreenhouseControls extends Controller {
