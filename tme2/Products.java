@@ -1,3 +1,18 @@
+/*
+ * File: Products.java
+ * Author: Steve Leung
+ * Modified By: Nevan Tan <nevan@tanclan.ca>
+ * StudentID: 3099925
+ * Date: 2005-10-21
+ * Date Modified: 2018-02-19
+ * 
+ * Compile:
+ * 	javac Products.java
+ * 
+ * Run:
+ * 	N/A (No entry point)
+ */
+
 import java.util.UUID;
 
 enum DriveType {
