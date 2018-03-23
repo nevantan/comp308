@@ -29,5 +29,3 @@ typically provide a `next()` method which returns the next element in the collec
 or false if there are no more, a `hasNext()` method which returns a boolean related to
 whether there is another element to be fetched, and a `remove()` method to remove the
 last fetched element from the collection.
-
-## Unit 
