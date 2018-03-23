@@ -171,20 +171,27 @@ public class GreenhouseControls extends Controller {
     }
 
     public class Restart extends Event {
+    	String eventsFile;
+    	
         public Restart(long delayTime, String filename) {
             super(delayTime);
-            eventsFile = filename;
+            this.eventsFile = filename;
         }
 
         public void action() {
-            addEvent(new ThermostatNight(0));
-            addEvent(new LightOn(2000));
-            addEvent(new WaterOff(8000));
-            addEvent(new ThermostatDay(10000));
-            addEvent(new Bell(9000));
-            addEvent(new WaterOn(6000));
-            addEvent(new LightOff(4000));
-            addEvent(new Terminate(12000));
+			File file = new File(this.eventsFile);
+			
+			try {
+				Scanner sc = new Scanner(file);
+				
+				while(sc.hasNextLine()) {
+					System.out.println(sc.next());
+				}
+				
+				sc.close();
+			} catch(FileNotFoundException e) {
+				System.out.println("Settings file not found!");
+			}
         }
 
         public String toString() {
