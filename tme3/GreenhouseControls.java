@@ -34,6 +34,10 @@
 import java.io.*;
 import java.util.Calendar;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.Map;
+import java.util.HashMap;
 import tme3.*;
 
 public class GreenhouseControls extends Controller {
@@ -161,7 +165,7 @@ public class GreenhouseControls extends Controller {
         }
         public void action() {
 			this.rung++;
-			if(this.rung <= this.rings) {
+			if(this.rung < this.rings) {
 				addEvent(new Bell(this.delayTime, this.rings, this.rung));
 			}
         }
@@ -185,7 +189,55 @@ public class GreenhouseControls extends Controller {
 				Scanner sc = new Scanner(file);
 				
 				while(sc.hasNextLine()) {
-					System.out.println(sc.next());
+					String line = sc.next();
+					Pattern p = Pattern.compile("(\\w*)=(\\w*),?");
+					Matcher m = p.matcher(line);
+					
+					Map<String, String> vars = new HashMap<>();
+					
+					while(m.find()) {
+						String key = m.group(1);
+						String value = m.group(2);
+						
+						vars.put(key, value);
+					}
+
+					long delayTime = Long.parseLong(vars.get("time"));					
+					switch(vars.get("Event")) {
+						case "LightOn":
+							addEvent(new LightOn(delayTime));
+							break;
+						case "LightOff":
+							addEvent(new LightOff(delayTime));
+							break;
+						case "WaterOn":
+							addEvent(new WaterOn(delayTime));
+							break;
+						case "WaterOff":
+							addEvent(new WaterOff(delayTime));
+							break;
+						case "FansOn":
+							addEvent(new FansOn(delayTime));
+							break;
+						case "FansOff":
+							addEvent(new FansOff(delayTime));
+							break;
+						case "ThermostatNight":
+							addEvent(new ThermostatNight(delayTime));
+							break;
+						case "ThermostatDay":
+							addEvent(new ThermostatDay(delayTime));
+							break;
+						case "Bell":
+							int rings = 0;
+							if(vars.containsKey("rings")) rings = Integer.parseInt(vars.get("rings"));
+							
+							addEvent(new Bell(delayTime, rings, 0));
+							break;
+						case "Terminate":
+							addEvent(new Terminate(delayTime));
+							break;
+					}
 				}
 				
 				sc.close();
