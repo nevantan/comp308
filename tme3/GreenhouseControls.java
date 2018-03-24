@@ -44,6 +44,8 @@ public class GreenhouseControls extends Controller {
     private boolean light = false;
     private boolean water = false;
     private boolean fans = false;
+    private boolean windowok = true;
+    private boolean poweron = true;
     private String thermostat = "Day";
     private String eventsFile = "examples1.txt";
 
@@ -172,6 +174,36 @@ public class GreenhouseControls extends Controller {
         public String toString() {
             return "Bing!";
         }
+    }
+    
+    public class ControllerException extends Exception {
+    	public ControllerException(String message) {
+    		super(message);
+    	}
+    }
+    
+    public class WindowMalfunction extends Event {
+    	public WindowMalfunction(long delayTime) {
+    		super(delayTime);
+    	}
+    	public void action() {
+    		windowok = false;
+    	}
+    	public String toString() {
+    		return "There is a problem with the greenhouse windows!";
+    	}
+    }
+    
+    public class PowerOut extends Event {
+    	public PowerOut(long delayTime) {
+    		super(delayTime);
+    	}
+    	public void action() {
+    		poweron = false;
+    	}
+    	public String toString() {
+    		return "The power has gone out!";
+    	}
     }
 
     public class Restart extends Event {
