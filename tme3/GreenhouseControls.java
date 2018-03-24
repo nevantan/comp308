@@ -291,6 +291,10 @@ public class GreenhouseControls extends Controller {
         }
     }
 
+	public void shutdown(String message) {
+		
+	}
+
     public static void printUsage() {
         System.out.println("Correct format: ");
         System.out.println("  java GreenhouseControls -f <filename>, or");

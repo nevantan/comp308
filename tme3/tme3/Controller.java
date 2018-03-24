@@ -17,7 +17,7 @@ package tme3;
 import java.util.*;
 
 
-public class Controller {
+public abstract class Controller {
   // A class from java.util to hold Event objects:
   private List<Event> eventList = new ArrayList<Event>();
   public void addEvent(Event c) { eventList.add(c); }
@@ -29,8 +29,16 @@ public class Controller {
       for(Event e : new ArrayList<Event>(eventList))
         if(e.ready()) {
           System.out.println(e);
-          e.action();
+          
+          try {
+	          e.action();
+	      } catch(ControllerException ex) {
+	      	shutdown(ex.getMessage());
+	      }
+
           eventList.remove(e);
         }
   }
+  
+  public abstract void shutdown(String message);
 } ///:~
