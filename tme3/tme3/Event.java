@@ -32,5 +32,5 @@ public abstract class Event {
   public boolean ready() {
     return System.currentTimeMillis() >= eventTime;
   }
-  public abstract void action();
+  public abstract void action() throws ControllerException;
 } ///:~
