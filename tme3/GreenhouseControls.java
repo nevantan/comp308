@@ -176,12 +176,6 @@ public class GreenhouseControls extends Controller {
         }
     }
     
-    public class ControllerException extends Exception {
-    	public ControllerException(String message) {
-    		super(message);
-    	}
-    }
-    
     public class WindowMalfunction extends Event {
     	public WindowMalfunction(long delayTime) {
     		super(delayTime);
