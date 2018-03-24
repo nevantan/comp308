@@ -32,6 +32,7 @@
  */
 
 import java.io.*;
+import java.nio.file.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -308,6 +309,13 @@ public class GreenhouseControls extends Controller {
 		errLine += " " + message;
 		
 		System.out.println("Logged:\n" + errLine);
+		
+		try {
+			Files.write(Paths.get("error.log"), errLine.getBytes(), StandardOpenOption.APPEND);
+		} catch(IOException e) {
+			System.out.println("There was an issue accessing the error log.");
+			System.out.println(e.getStackTrace());
+		}
 	}
 
     public static void printUsage() {
