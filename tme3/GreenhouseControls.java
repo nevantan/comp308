@@ -35,6 +35,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Calendar;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -269,6 +270,12 @@ public class GreenhouseControls extends Controller {
 							
 							addEvent(new Bell(delayTime, rings, 0));
 							break;
+						case "WindowMalfunction":
+							addEvent(new WindowMalfunction(delayTime));
+							break;
+						case "PowerOut":
+							addEvent(new PowerOut(delayTime));
+							break;
 						case "Terminate":
 							addEvent(new Terminate(delayTime));
 							break;
@@ -299,14 +306,13 @@ public class GreenhouseControls extends Controller {
     }
 
 	public void shutdown(String message) {
-		System.out.println(message);
 		eventList.clear();
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
+		Date date = new Date();
 		
-		String errLine = dateFormat.format(cal);
-		errLine += " " + message;
+		String errLine = "[" + dateFormat.format(date) + "] ";
+		errLine += message;
 		
 		System.out.println("Logged:\n" + errLine);
 		
@@ -314,7 +320,7 @@ public class GreenhouseControls extends Controller {
 			Files.write(Paths.get("error.log"), errLine.getBytes(), StandardOpenOption.APPEND);
 		} catch(IOException e) {
 			System.out.println("There was an issue accessing the error log.");
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 		}
 	}
 
