@@ -32,6 +32,8 @@
  */
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -44,10 +46,12 @@ public class GreenhouseControls extends Controller {
     private boolean light = false;
     private boolean water = false;
     private boolean fans = false;
-    private boolean windowok = true;
-    private boolean poweron = true;
     private String thermostat = "Day";
     private String eventsFile = "examples1.txt";
+    
+    private boolean windowok = true;
+    private boolean poweron = true;
+    private int errorcode = 0;
 
 
     public class LightOn extends Event {
@@ -182,6 +186,7 @@ public class GreenhouseControls extends Controller {
     	}
     	public void action() throws ControllerException {
     		windowok = false;
+    		errorcode = 1;
     		throw new ControllerException(this.toString());
     	}
     	public String toString() {
@@ -195,6 +200,7 @@ public class GreenhouseControls extends Controller {
     	}
     	public void action() throws ControllerException {
     		poweron = false;
+    		errorcode = 2;
     		throw new ControllerException(this.toString());
     	}
     	public String toString() {
@@ -294,6 +300,14 @@ public class GreenhouseControls extends Controller {
 	public void shutdown(String message) {
 		System.out.println(message);
 		eventList.clear();
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		
+		String errLine = dateFormat.format(cal);
+		errLine += " " + message;
+		
+		System.out.println("Logged:\n" + errLine);
 	}
 
     public static void printUsage() {
