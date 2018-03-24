@@ -292,7 +292,8 @@ public class GreenhouseControls extends Controller {
     }
 
 	public void shutdown(String message) {
-		
+		System.out.println(message);
+		eventList.clear();
 	}
 
     public static void printUsage() {

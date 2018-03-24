@@ -19,7 +19,7 @@ import java.util.*;
 
 public abstract class Controller {
   // A class from java.util to hold Event objects:
-  private List<Event> eventList = new ArrayList<Event>();
+  protected List<Event> eventList = new ArrayList<Event>();
   public void addEvent(Event c) { eventList.add(c); }
 
   public void run() {
