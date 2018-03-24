@@ -211,15 +211,13 @@ public class GreenhouseControls extends Controller {
     }
 
     public class Restart extends Event {
-    	String eventsFile;
-    	
         public Restart(long delayTime, String filename) {
             super(delayTime);
-            this.eventsFile = filename;
+            eventsFile = filename;
         }
 
         public void action() {
-			File file = new File(this.eventsFile);
+			File file = new File(eventsFile);
 			
 			try {
 				Scanner sc = new Scanner(file);
@@ -325,7 +323,7 @@ public class GreenhouseControls extends Controller {
 		}
 		
 		try {
-			Files.write(Paths.get("dump.out"), toString().getBytes(), StandardOpenOption.WRITE);
+			Files.write(Paths.get("dump.out"), toString().getBytes(), StandardOpenOption.CREATE);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -337,7 +335,7 @@ public class GreenhouseControls extends Controller {
 		data += "Water: " + water + "\n";
 		data += "Fans: " + fans + "\n";
 		data += "Thermostat: " + thermostat + "\n";
-		data += "Settings File: " + eventsFile + "\n";
+		data += "Settings File: " + eventsFile + "\n\n";
 		data += "[ERROR CONDITIONS]\n";
 		data += "Window ok? " + windowok + "\n";
 		data += "Power on? " + poweron + "\n";
