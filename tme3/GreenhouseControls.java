@@ -314,14 +314,35 @@ public class GreenhouseControls extends Controller {
 		String errLine = "[" + dateFormat.format(date) + "] ";
 		errLine += message;
 		
-		System.out.println("Logged:\n" + errLine);
-		
-		try {
-			Files.write(Paths.get("error.log"), errLine.getBytes(), StandardOpenOption.APPEND);
+		try(FileWriter fw = new FileWriter("error.log", true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter out = new PrintWriter(bw)
+		) {
+			out.println(errLine);
+			System.out.println("Logged:\n" + errLine);
 		} catch(IOException e) {
-			System.out.println("There was an issue accessing the error log.");
 			e.printStackTrace();
 		}
+		
+		try {
+			Files.write(Paths.get("dump.out"), toString().getBytes(), StandardOpenOption.WRITE);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String toString() {
+		String data = "[STATES]\n";
+		data += "Lights: " + light + "\n";
+		data += "Water: " + water + "\n";
+		data += "Fans: " + fans + "\n";
+		data += "Thermostat: " + thermostat + "\n";
+		data += "Settings File: " + eventsFile + "\n";
+		data += "[ERROR CONDITIONS]\n";
+		data += "Window ok? " + windowok + "\n";
+		data += "Power on? " + poweron + "\n";
+		data += "Error code: " + errorcode + "\n";
+		return data;
 	}
 
     public static void printUsage() {
