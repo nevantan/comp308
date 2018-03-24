@@ -180,8 +180,9 @@ public class GreenhouseControls extends Controller {
     	public WindowMalfunction(long delayTime) {
     		super(delayTime);
     	}
-    	public void action() {
+    	public void action() throws ControllerException {
     		windowok = false;
+    		throw new ControllerException(this.toString());
     	}
     	public String toString() {
     		return "There is a problem with the greenhouse windows!";
@@ -192,8 +193,9 @@ public class GreenhouseControls extends Controller {
     	public PowerOut(long delayTime) {
     		super(delayTime);
     	}
-    	public void action() {
+    	public void action() throws ControllerException {
     		poweron = false;
+    		throw new ControllerException(this.toString());
     	}
     	public String toString() {
     		return "The power has gone out!";
