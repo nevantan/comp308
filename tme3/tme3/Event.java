@@ -33,4 +33,8 @@ public abstract class Event {
     return System.currentTimeMillis() >= eventTime;
   }
   public abstract void action() throws ControllerException;
+  
+  public String toString(Boolean serialize) {
+  	return "Event=" + this.getClass().getSimpleName() + ",time=" + this.delayTime + "\n";
+  }
 } ///:~

@@ -1,6 +1,6 @@
 package tme3;
 
-interface Fixable {
+public interface Fixable {
 	void fix();
 	
 	void log();

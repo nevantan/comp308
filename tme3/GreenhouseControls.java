@@ -42,6 +42,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import tme3.*;
 
 public class GreenhouseControls extends Controller {
@@ -180,6 +182,9 @@ public class GreenhouseControls extends Controller {
         public String toString() {
             return "Bing!";
         }
+        public String toString(Boolean serialize) {
+        	return "Event=Bell,time=" + this.delayTime + ",rings=" + this.rings + ",rung=" + this.rung;
+        }
     }
     
     public class WindowMalfunction extends Event {
@@ -189,6 +194,7 @@ public class GreenhouseControls extends Controller {
     	public void action() throws ControllerException {
     		windowok = false;
     		errorcode = 1;
+    		eventList.remove(this);
     		throw new ControllerException(this.toString());
     	}
     	public String toString() {
@@ -199,9 +205,11 @@ public class GreenhouseControls extends Controller {
     public class FixWindow implements Fixable {
     	public void fix() {
     		windowok = true;
-    		errorcode = 0;
     	}
     	public void log() {
+    		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+		
     		String fixLine = "[" + dateFormat.format(date) + "] ";
     		fixLine += "The greenhouse windows have been fixed";
     		
@@ -224,6 +232,7 @@ public class GreenhouseControls extends Controller {
     	public void action() throws ControllerException {
     		poweron = false;
     		errorcode = 2;
+    		eventList.remove(this);
     		throw new ControllerException(this.toString());
     	}
     	public String toString() {
@@ -231,12 +240,14 @@ public class GreenhouseControls extends Controller {
     	}
     }
     
-    public class FixWindow implements Fixable {
+    public class PowerOn implements Fixable {
     	public void fix() {
     		poweron = true;
-    		errorcode = 0;
     	}
     	public void log() {
+    		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+    		
     		String fixLine = "[" + dateFormat.format(date) + "] ";
     		fixLine += "The greenhouse power has been restored";
     		
@@ -253,31 +264,43 @@ public class GreenhouseControls extends Controller {
     }
 
     public class Restart extends Event {
-        public Restart(long delayTime, String filename) {
+    	private Boolean temp;
+    	
+        public Restart(long delayTime, String filename, Boolean temp) {
             super(delayTime);
             eventsFile = filename;
+            this.temp = temp;
         }
 
         public void action() {
+        	// Open provided events file
 			File file = new File(eventsFile);
 			
 			try {
 				Scanner sc = new Scanner(file);
 				
+				// For each line...
 				while(sc.hasNextLine()) {
-					String line = sc.next();
+					String line = sc.nextLine();
+					
+					// Look for the pattern [key]=[value]
 					Pattern p = Pattern.compile("(\\w*)=(\\w*),?");
 					Matcher m = p.matcher(line);
 					
 					Map<String, String> vars = new HashMap<>();
 					
+					// For each key/value pair in the line...
 					while(m.find()) {
 						String key = m.group(1);
 						String value = m.group(2);
 						
+						// Store pair in map
 						vars.put(key, value);
 					}
 
+					// Deal with each event type. Not really necessary for this exercise,
+					// but allows for expansion of there are other events that have specific
+					// setup like Bell.
 					long delayTime = Long.parseLong(vars.get("time"));					
 					switch(vars.get("Event")) {
 						case "LightOn":
@@ -322,6 +345,11 @@ public class GreenhouseControls extends Controller {
 				}
 				
 				sc.close();
+				
+				// If the settings file was marked as temp, delete it
+				if(this.temp) {
+					file.delete();
+				}
 			} catch(FileNotFoundException e) {
 				System.out.println("Settings file not found!");
 			}
@@ -343,16 +371,142 @@ public class GreenhouseControls extends Controller {
             return "Terminating";
         }
     }
+    
+    public class Restore {
+    	// Store events list to write to file
+    	private String events = "";
+    	
+    	public Restore(String dumpFile) {
+    		// Open dump file
+			File file = new File(dumpFile);
+			String section = "";
+			
+			try {
+				Scanner sc = new Scanner(file);
+
+				// For each line...				
+				while(sc.hasNextLine()) {
+					String line = sc.nextLine();
+					
+					if(line.length() <= 0) continue; // Ignore blank lines
+					else if(line.charAt(0) == '[') section = line; // If section line, remember it
+					else parseLine(section, line); // Parse line based on section
+				}
+				
+				// Once all lines have been parsed, restart the GreenhouseControls
+				apply();
+				
+				sc.close();
+			} catch(FileNotFoundException e) {
+				System.out.println("Dump file not found!");
+			}
+    	}
+    	
+    	private void parseLine(String section, String line) {
+    		// Grab the key/value pair from the dump line
+    		Pattern p = Pattern.compile("(.*)\\:(.*)");
+			Matcher m = p.matcher(line);
+    		
+    		String key = "", value = "";
+    		
+    		if(m.find()) {
+				key = m.group(1);
+				value = m.group(2);
+			}
+
+    		// Parse the line based on the section
+    		switch(section) {
+    			case "[STATES]":
+    				parseStateLine(key, value);
+    				break;
+    			case "[ERROR CONDITIONS]":
+    				parseErrorLine(key, value);
+    				break;
+    			case "[EVENTS]":
+    				parseEventLine(line);
+    				break;
+    		}
+    	}
+    	
+    	private void parseStateLine(String key, String value) {
+    		// Set states
+			switch(key) {
+				case "Lights":
+					light = Boolean.valueOf(value);
+					break;
+				case "Water":
+					water = Boolean.valueOf(value);
+					break;
+				case "Fans":
+					fans = Boolean.valueOf(value);
+					break;
+				case "Thermostat":
+					thermostat = value;
+					break;
+				case "Settings File":
+					eventsFile = value;
+					break;
+			}
+    	}
+    	
+    	private void parseErrorLine(String key, String value) {
+    		// Set error states
+			switch(key) {
+				case "Window":
+					windowok = Boolean.valueOf(value);
+					break;
+				case "Power":
+					poweron = Boolean.valueOf(value);
+					break;
+				case "Errorcode":
+					errorcode = Integer.parseInt(value);
+					break;
+			}  		
+    	}
+    	
+    	private void parseEventLine(String line) {
+    		// Add event to String to be written to file
+    		this.events += line + '\n';
+    	}
+    	
+    	private void apply() {
+    		// Write a temp settings file and restart the system
+    		try {
+				Files.write(Paths.get("restart.temp"), this.events.getBytes(), StandardOpenOption.CREATE);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+			addEvent(new Restart(0, "restart.temp", true));
+    	}
+    }
+    
+    public int getError() {
+    	return errorcode;
+    }
+    
+    public Fixable getFixable(int error) {
+    	errorcode = 0;
+    	
+    	switch(error) {
+    		case 1:
+    			return new FixWindow();
+    		case 2:
+    			return new PowerOn();
+    	}
+    	
+    	return null;
+    }
 
 	public void shutdown(String message) {
-		eventList.clear();
-		
+		// Get the current date
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		
+		// Line to print to console and error log
 		String errLine = "[" + dateFormat.format(date) + "] ";
 		errLine += message;
 		
+		// Append to error log
 		try(FileWriter fw = new FileWriter("error.log", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter out = new PrintWriter(bw)
@@ -362,25 +516,41 @@ public class GreenhouseControls extends Controller {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+
+		// Serialize GreenhouseControls		
+		String dump = toString(eventList);
 		
+		// Dump state to file
 		try {
-			Files.write(Paths.get("dump.out"), toString().getBytes(), StandardOpenOption.CREATE);
+			Files.write(Paths.get("dump.out"), dump.getBytes(), StandardOpenOption.CREATE);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		
+		// Clear the events list and stop the system
+		eventList.clear();
+		addEvent(new Terminate(0));
 	}
 
-	public String toString() {
+	public String toString(List<Event> eventList) {
+		// Serialize state
 		String data = "[STATES]\n";
-		data += "Lights: " + light + "\n";
-		data += "Water: " + water + "\n";
-		data += "Fans: " + fans + "\n";
-		data += "Thermostat: " + thermostat + "\n";
-		data += "Settings File: " + eventsFile + "\n\n";
+		data += "Lights:" + light + "\n";
+		data += "Water:" + water + "\n";
+		data += "Fans:" + fans + "\n";
+		data += "Thermostat:" + thermostat + "\n";
+		data += "Settings File:" + eventsFile + "\n\n";
 		data += "[ERROR CONDITIONS]\n";
-		data += "Window ok? " + windowok + "\n";
-		data += "Power on? " + poweron + "\n";
-		data += "Error code: " + errorcode + "\n";
+		data += "Window:" + windowok + "\n";
+		data += "Power:" + poweron + "\n";
+		data += "Errorcode:" + errorcode + "\n\n";
+		data += "[EVENTS]\n";
+		
+		// Serialize event list
+		for(Event e : eventList) {
+			data += e.toString(true);
+		}
+		
 		return data;
 	}
 
@@ -405,7 +575,10 @@ public class GreenhouseControls extends Controller {
             GreenhouseControls gc = new GreenhouseControls();
 
             if (option.equals("-f")) {
-                gc.addEvent(gc.new Restart(0, filename));
+                gc.addEvent(gc.new Restart(0, filename, false));
+            } else if(option.equals("-d")) {
+            	// Start from restore point
+            	GreenhouseControls.Restore restore = gc.new Restore(filename);
             }
 
             gc.run();
