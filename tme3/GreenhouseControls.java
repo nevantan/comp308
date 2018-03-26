@@ -196,6 +196,27 @@ public class GreenhouseControls extends Controller {
     	}
     }
     
+    public class FixWindow implements Fixable {
+    	public void fix() {
+    		windowok = true;
+    		errorcode = 0;
+    	}
+    	public void log() {
+    		String fixLine = "[" + dateFormat.format(date) + "] ";
+    		fixLine += "The greenhouse windows have been fixed";
+    		
+    		try(FileWriter fw = new FileWriter("fix.log", true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)
+			) {
+				out.println(fixLine);
+				System.out.println("Logged:\n" + fixLine);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
+    
     public class PowerOut extends Event {
     	public PowerOut(long delayTime) {
     		super(delayTime);
@@ -207,6 +228,27 @@ public class GreenhouseControls extends Controller {
     	}
     	public String toString() {
     		return "The power has gone out!";
+    	}
+    }
+    
+    public class FixWindow implements Fixable {
+    	public void fix() {
+    		poweron = true;
+    		errorcode = 0;
+    	}
+    	public void log() {
+    		String fixLine = "[" + dateFormat.format(date) + "] ";
+    		fixLine += "The greenhouse power has been restored";
+    		
+    		try(FileWriter fw = new FileWriter("fix.log", true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)
+			) {
+				out.println(fixLine);
+				System.out.println("Logged:\n" + fixLine);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
     	}
     }
 
@@ -265,7 +307,6 @@ public class GreenhouseControls extends Controller {
 						case "Bell":
 							int rings = 0;
 							if(vars.containsKey("rings")) rings = Integer.parseInt(vars.get("rings"));
-							
 							addEvent(new Bell(delayTime, rings, 0));
 							break;
 						case "WindowMalfunction":
