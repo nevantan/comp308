@@ -4,11 +4,9 @@ import java.lang.reflect.*;
 import java.lang.Thread;
 
 public abstract class Controller {
-  protected Object monitor;
-  protected static Boolean _running;
+  protected Boolean _running;
 
   public Controller() {
-    this.monitor = new Object();
     this._running = true;
   }
 
@@ -20,8 +18,8 @@ public abstract class Controller {
   public void addEvent(String name, long delayTime) {
     try {
       Class cl = Class.forName("events." + name);
-      Constructor con = cl.getConstructor(long.class, Object.class);
-      Object o = con.newInstance(delayTime, this.monitor);
+      Constructor con = cl.getConstructor(long.class, Controller.class);
+      Object o = con.newInstance(delayTime, this);
       Event e = (Event)o;
 
       this.addEvent(e);
@@ -38,7 +36,17 @@ public abstract class Controller {
     }
   }
 
-  public static Boolean running() {
-    return _running;
+  public Boolean running() {
+    synchronized(this) {
+      this.notifyAll();
+    }
+    return this._running;
+  }
+
+  public void running(Boolean running) {
+    synchronized(this) {
+      this._running = running;
+      this.notifyAll();
+    }
   }
 }

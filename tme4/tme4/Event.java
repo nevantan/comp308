@@ -7,13 +7,13 @@ public abstract class Event implements Runnable {
   protected final long delayTime;
   protected long curTime;
   protected long lastTime;
-  protected Object monitor;
+  protected Controller controller;
 
-  public Event(long delayTime, Object monitor) {
+  public Event(long delayTime, Controller controller) {
     this.delayTime = delayTime;
     this.curTime = delayTime;
 
-    this.monitor = monitor;
+    this.controller = controller;
   }
 
   // Thread start method
@@ -21,10 +21,10 @@ public abstract class Event implements Runnable {
     this.lastTime = System.currentTimeMillis();
     
     try {
-      synchronized(this.monitor) {
-        while(tick()) {
-          while(!Controller.running()) {
-            this.monitor.wait();
+      while(tick()) {
+        synchronized(this.controller) {
+          while(!this.controller.running()) {
+            this.controller.wait();
             this.lastTime = System.currentTimeMillis();
           }
         }
@@ -51,10 +51,6 @@ public abstract class Event implements Runnable {
 
   public String serialize() {
     return "Event=" + this.getClass().getName() + ",delay=" + this.delayTime;
-  }
-
-  public void setMonitor(Object monitor) {
-    this.monitor = monitor;
   }
 
   public abstract void action() throws ControllerException;
