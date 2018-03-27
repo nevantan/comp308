@@ -1,11 +1,10 @@
 package events;
 
-import tme4.Event;
-import tme4.ControllerException;
+import tme4.*;
 
 public class FansOn extends Event {
-  public FansOn(long delayTime, Object monitor) {
-    super(delayTime, monitor);
+  public FansOn(long delayTime, Controller controller) {
+    super(delayTime, controller);
   }
 
   public void action() throws ControllerException {
