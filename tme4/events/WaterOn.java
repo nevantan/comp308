@@ -8,6 +8,7 @@ public class WaterOn extends Event {
   }
 
   public void action() throws ControllerException {
+    this.controller.setVariable("Water", true);
     System.out.println("Water is now on");
   }
 }

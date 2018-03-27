@@ -49,4 +49,6 @@ public abstract class Controller {
       this.notifyAll();
     }
   }
+
+  public abstract void setVariable(String key, Object value);
 }

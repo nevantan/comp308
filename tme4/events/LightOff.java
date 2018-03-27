@@ -8,6 +8,7 @@ public class LightOff extends Event {
   }
 
   public void action() throws ControllerException {
+    this.controller.setVariable("Lights", false);
     System.out.println("Lights are now off");
   }
 }
