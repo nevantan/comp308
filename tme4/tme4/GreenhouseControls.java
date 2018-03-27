@@ -1,4 +1,5 @@
-import tme4.*;
+package tme4;
+
 import events.*;
 
 import java.util.ArrayList;
@@ -20,8 +21,6 @@ public class GreenhouseControls extends Controller {
     this.setWindowOk(true);
     this.setPowerOn(true);
     this.setErrorCode(0);
-
-    System.out.println(this);
   }
 
   public void setVariable(String key, Object value) throws ControllerException {
@@ -91,11 +90,5 @@ public class GreenhouseControls extends Controller {
     data += "Power On: " + getPowerOn() + "\n";
     data += "Error Code: " + getErrorCode() + "\n";
     return data;
-  }
-
-  // Entry point
-  public static void main(String[] args) {
-    GreenhouseControls gc = new GreenhouseControls();
-    gc.addEvent(new Restart(0, gc, "settings.txt", false));
   }
 }
