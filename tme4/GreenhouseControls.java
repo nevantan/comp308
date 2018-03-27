@@ -9,6 +9,7 @@ public class GreenhouseControls extends Controller {
 
   public static void main(String[] args) {
     GreenhouseControls gc = new GreenhouseControls();
-    gc.addEvent(new FansOn(2000, gc.monitor));
+    //gc.addEvent(new FansOn(2000, gc.monitor));
+    gc.addEvent("FansOn", 2000);
   }
 }
