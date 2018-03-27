@@ -50,5 +50,5 @@ public abstract class Controller {
     }
   }
 
-  public abstract void setVariable(String key, Object value);
+  public abstract void setVariable(String key, Object value) throws ControllerException;
 }
