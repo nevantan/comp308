@@ -21,6 +21,7 @@ enum DriveType {
 
 interface IComputer {}
 interface IParty {}
+interface IComputerParty {}
 
 /******************************************************************/
 
@@ -43,7 +44,7 @@ abstract class Product {
 
 /******************************************************************/
 
-class ComputerPart extends Product implements IComputer {
+class ComputerPart extends Product implements IComputer, IComputerParty {
 	protected String manufacturer;
 	
 	public ComputerPart(String mfg, float p) {
@@ -114,7 +115,7 @@ class Drive extends Storage {
 
 /******************************************************************/
 
-class Peripheral extends Product implements IComputer {
+class Peripheral extends Product implements IComputer, IComputerParty {
 	protected String model;
 	
 	public Peripheral(String model, float p) {
@@ -145,7 +146,7 @@ class Monitor extends Peripheral {
 
 /******************************************************************/
 
-class Service extends Product implements IComputer, IParty {
+class Service extends Product implements IComputer, IParty, IComputerParty {
 	protected String vendor;
 	
 	public Service(String vendor, float p) {
@@ -176,7 +177,7 @@ class DeliveryService extends Service {
 
 /******************************************************************/
 
-class Cheese extends Product implements IParty {
+class Cheese extends Product implements IParty, IComputerParty {
 	public Cheese(float p) {
 		this.price = p;
 	}
@@ -200,7 +201,7 @@ class Mozzarella extends Cheese {
 
 /******************************************************************/
 
-class Fruit extends Product implements IParty {
+class Fruit extends Product implements IParty, IComputerParty {
 	public Fruit(float p) {
 		this.price = p;
 	}
