@@ -52,12 +52,42 @@ public class OrderClient {
 		order2.addProduct(new Apple(1));
 		order2.addProduct(new Orange(2));
 		
+		// Setup an empty ComputerPartyOrder
+		ComputerPartyOrder<IComputerParty> order3 = new ComputerPartyOrder<IComputerParty>();
+
+		// Add the four subclasses of ComputerParts with arbitrary test data
+		order3.addProduct(new Motherboard("Asus", 500));
+		order3.addProduct(new Motherboard("Gigabyte", 500));
+		order3.addProduct(new RAM("Corasir", 4096, 120));
+		order3.addProduct(new Drive("Seagate", DriveType.SSD, 256, 5400, 120));
+		
+		// Add the two subclasses of Peripheral with arbitrary test data
+		order3.addProduct(new Printer("HP 5500", 600));
+		order3.addProduct(new Monitor("Dell P2411H", 500));
+		
+		// Add the two subclasses of Service with arbitrary test data
+		order3.addProduct(new AssemblyService("Best Buy", 75));
+		order3.addProduct(new DeliveryService("FedEx", 20));
+
+		// Add the two subclasses of Service with arbitrary test data
+		order3.addProduct(new AssemblyService("Best Buy", 75));
+		order3.addProduct(new DeliveryService("FedEx", 20));
+
+		// Add the two subclasses of Cheese with arbitrary test data
+		order3.addProduct(new Cheddar(5));
+		order3.addProduct(new Mozzarella(4));
+		
+		// Add the two subclasses of Fruit with arbitrary test data
+		order3.addProduct(new Apple(1));
+		order3.addProduct(new Orange(2));
+
 		// Create a new order processor
 		OrderProcessor processor = new OrderProcessor();
 		
 		// Accept both order setup above
 		processor.accept(order);
 		processor.accept(order2);
+		processor.accept(order3);
 		
 		// Process the orders
 		processor.process();
