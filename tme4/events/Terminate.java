@@ -9,6 +9,7 @@ public class Terminate extends Event {
 
   public void action() throws ControllerException {
     System.out.println("Terminating...");
-    System.exit(0);
+    this.controller.log("Terminating execution...");
+    this.controller.killAll();
   }
 }
