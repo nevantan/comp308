@@ -1,14 +1,21 @@
 package tme4;
 
 import events.*;
-
+import javafx.scene.control.TextArea;
 import java.util.ArrayList;
+import java.lang.reflect.Method;
+
+import java.io.*;
+import java.nio.file.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GreenhouseControls extends Controller {
   protected ArrayList<Tuple> states;
 
-  public GreenhouseControls() {
-    super();
+  public GreenhouseControls(TextArea logOutput, Object o, Method cb) {
+    super(logOutput, o, cb);
 
     this.states = new ArrayList<>();
 
@@ -23,7 +30,7 @@ public class GreenhouseControls extends Controller {
     this.setErrorCode(0);
   }
 
-  public void setVariable(String key, Object value) throws ControllerException {
+  public void setVariable(String key, Object value, String message) throws ControllerException {
     synchronized(this.states) {
       for(int i = 0; i < this.states.size(); i++) {
         Tuple state = this.states.get(i);
@@ -38,6 +45,10 @@ public class GreenhouseControls extends Controller {
 
       states.add(new Tuple(key, value));
     }
+  }
+
+  public void setVariable(String key, Object value) throws ControllerException {
+    setVariable(key, value, "Setting " + key + "...");
   }
 
   public Object getVariable(String key) {
@@ -72,11 +83,48 @@ public class GreenhouseControls extends Controller {
   public void setPowerOn(Boolean state) { try { this.setVariable("Power On", state); } catch(ControllerException e) {} }
   public Boolean getPowerOn() { return (Boolean)this.getVariable("Power On"); }
 
-  public void setErrorCode(int code) { try { this.setVariable("ErrorCode", code); } catch(ControllerException e) {} }
+  public void setErrorCode(int code) { try { this.setVariable("Error Code", code); } catch(ControllerException e) {} }
   public int getErrorCode() {
-    Object code = this.getVariable("ErrorCode");
+    Object code = this.getVariable("Error Code");
     if(code != null) return (int)code;
     return -1;
+  }
+
+  public void shutdown(String message) {
+    // Get the current date
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date();
+    
+    // Log error
+    this.log(message);
+
+    // Line to print to console and error log
+    String errLine = "[" + dateFormat.format(date) + "] ";
+    errLine += message;
+
+    // Append to error log
+    try(FileWriter fw = new FileWriter("error.log", true);
+      BufferedWriter bw = new BufferedWriter(fw);
+      PrintWriter out = new PrintWriter(bw)
+    ) {
+      out.println(errLine);
+      System.out.println("Logged:\n" + errLine);
+    } catch(IOException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      String dump = "";
+      for(Tuple t : this.states) {
+        dump += t.key + "=" + t.value + "\n";
+      }
+      Files.write(Paths.get("dump.out"), dump.getBytes(), StandardOpenOption.CREATE);
+    } catch(IOException e) {
+      e.printStackTrace();
+    }
+
+    this.states.clear();
+    this.addEvent(new Terminate(0, this));
   }
 
   public String toString() {
