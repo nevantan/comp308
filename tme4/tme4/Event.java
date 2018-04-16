@@ -21,9 +21,14 @@ public abstract class Event implements Runnable {
     this.lastTime = System.currentTimeMillis();
     
     try {
+      synchronized(this.controller) {
+        this.controller.incrementThreads();
+      }
+
       while(tick()) {
         synchronized(this.controller) {
-          while(!this.controller.running()) {
+          while(!this.controller.running() || this.controller.kill()) {
+            if(this.controller.kill()) return;
             this.controller.wait();
             this.lastTime = System.currentTimeMillis();
           }
@@ -34,7 +39,14 @@ public abstract class Event implements Runnable {
     } catch(InterruptedException e) {
       e.printStackTrace();
     } catch(ControllerException e) {
-      e.printStackTrace();
+      synchronized(this.controller) {
+        this.controller.shutdown(e.getMessage());
+      }
+    } finally {
+      synchronized(this.controller) {
+        this.controller.decrementThreads();
+        this.controller.callback(this.getClass().getName());
+      }
     }
   }
 
