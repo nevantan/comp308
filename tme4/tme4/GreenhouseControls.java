@@ -1,6 +1,7 @@
 package tme4;
 
 import events.*;
+import fixables.*;
 import javafx.scene.control.TextArea;
 import java.util.ArrayList;
 import java.lang.reflect.Method;
@@ -10,6 +11,9 @@ import java.nio.file.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class GreenhouseControls extends Controller {
   protected ArrayList<Tuple> states;
@@ -30,21 +34,28 @@ public class GreenhouseControls extends Controller {
     this.setErrorCode(0);
   }
 
-  public void setVariable(String key, Object value, String message) throws ControllerException {
-    synchronized(this.states) {
-      for(int i = 0; i < this.states.size(); i++) {
-        Tuple state = this.states.get(i);
-
-        if(state.key == key) {
-          if(!(state.value.getClass().equals(value.getClass()))) throw new ControllerException("Type of value does not match state key provided.");
-
-          this.states.set(i, new Tuple(key, value));
-          return;
-        }
-      }
-
-      states.add(new Tuple(key, value));
+  public void setVariable(String key, Object ov, String message) throws ControllerException {
+    String value;
+    switch(ov.getClass().getSimpleName()) {
+      case "Integer":
+        value = "" + (int)ov;
+        break;
+      default:
+        value = ov.toString();
     }
+
+    for(int i = 0; i < this.states.size(); i++) {
+      Tuple state = this.states.get(i);
+
+      if(state.key.equals(key)) {
+        if(!(state.value.getClass().equals(value.getClass()))) throw new ControllerException("Type of value does not match state key provided.");
+
+        this.states.set(i, new Tuple(key, value));
+        return;
+      }
+    }
+
+    states.add(new Tuple(key, value));
   }
 
   public void setVariable(String key, Object value) throws ControllerException {
@@ -52,9 +63,9 @@ public class GreenhouseControls extends Controller {
   }
 
   public Object getVariable(String key) {
-    synchronized(this.states) {
-      for(Tuple state : this.states) {
-        if(state.key == key) return state.value;
+    for(Tuple state : this.states) {
+      if(state.key.equals(key)) {
+        return state.value;
       }
     }
 
@@ -62,32 +73,31 @@ public class GreenhouseControls extends Controller {
   }
 
   // Convenience getters and setters
-  public void setLights(Boolean state) { try { this.setVariable("Lights", state); } catch(ControllerException e) {} }
-  public Boolean getLights() { return (Boolean)this.getVariable("Lights"); }
+  public void setLights(Boolean state) { try { this.setVariable("Lights", state.toString()); } catch(ControllerException e) { e.printStackTrace(); } }
+  public Boolean getLights() { return Boolean.parseBoolean((String)this.getVariable("Lights")); }
 
-  public void setWater(Boolean state) { try { this.setVariable("Water", state); } catch(ControllerException e) {} }
-  public Boolean getWater() { return (Boolean)this.getVariable("Water"); }
+  public void setWater(Boolean state) { try { this.setVariable("Water", state.toString()); } catch(ControllerException e) { e.printStackTrace(); } }
+  public Boolean getWater() { return Boolean.parseBoolean((String)this.getVariable("Water")); }
 
-  public void setFans(Boolean state) { try { this.setVariable("Fans", state); } catch(ControllerException e) {} }
-  public Boolean getFans() { return (Boolean)this.getVariable("Fans"); }
+  public void setFans(Boolean state) { try { this.setVariable("Fans", state.toString()); } catch(ControllerException e) { e.printStackTrace(); } }
+  public Boolean getFans() { return Boolean.parseBoolean((String)this.getVariable("Fans")); }
 
-  public void setThermostat(String state) { try { this.setVariable("Thermostat", state); } catch(ControllerException e) {} }
+  public void setThermostat(String state) { try { this.setVariable("Thermostat", state); } catch(ControllerException e) { e.printStackTrace(); } }
   public String getThermostat() { return (String)this.getVariable("Thermostat"); }
 
-  public void setEventsFile(String filename) { try { this.setVariable("EventsFile", filename); } catch(ControllerException e) {} }
-  public String getEventsFile() { return (String)this.getVariable("EventsFile"); }
+  public void setEventsFile(String filename) { try { this.setVariable("Events File", filename); } catch(ControllerException e) { e.printStackTrace(); } }
+  public String getEventsFile() { return (String)this.getVariable("Events File"); }
 
-  public void setWindowOk(Boolean state) { try { this.setVariable("Window Ok", state); } catch(ControllerException e) {} }
-  public Boolean getWindowOk() { return (Boolean)this.getVariable("Window Ok"); }
+  public void setWindowOk(Boolean state) { try { this.setVariable("Window Ok", state.toString()); } catch(ControllerException e) { e.printStackTrace(); } }
+  public Boolean getWindowOk() { return Boolean.parseBoolean((String)this.getVariable("Window Ok")); }
 
-  public void setPowerOn(Boolean state) { try { this.setVariable("Power On", state); } catch(ControllerException e) {} }
-  public Boolean getPowerOn() { return (Boolean)this.getVariable("Power On"); }
+  public void setPowerOn(Boolean state) { try { this.setVariable("Power On", state.toString()); } catch(ControllerException e) { e.printStackTrace(); } }
+  public Boolean getPowerOn() { return Boolean.parseBoolean((String)this.getVariable("Power On")); }
 
-  public void setErrorCode(int code) { try { this.setVariable("Error Code", code); } catch(ControllerException e) {} }
+  public void setErrorCode(int code) { try { this.setVariable("Error Code", "" + code); } catch(ControllerException e) { e.printStackTrace(); } }
   public int getErrorCode() {
-    Object code = this.getVariable("Error Code");
-    if(code != null) return (int)code;
-    return -1;
+    int code = Integer.parseInt((String)this.getVariable("Error Code"));
+    return code;
   }
 
   public void shutdown(String message) {
@@ -119,12 +129,62 @@ public class GreenhouseControls extends Controller {
         dump += t.key + "=" + t.value + "\n";
       }
       Files.write(Paths.get("dump.out"), dump.getBytes(), StandardOpenOption.CREATE);
+
+      String events = "";
+      for(Event e : this.events) {
+        if(e.getTime() > 0) {
+          events += e.serialize() + "\n";
+        }
+      }
+      Files.write(Paths.get("dump.settings"), events.getBytes(), StandardOpenOption.CREATE);
     } catch(IOException e) {
       e.printStackTrace();
     }
 
     this.states.clear();
     this.addEvent(new Terminate(0, this));
+  }
+
+  public void restore(File dumpfile) {
+    try {
+      Scanner sc = new Scanner(dumpfile);
+      while(sc.hasNextLine()) {
+        String line = sc.nextLine();
+        if(line.length() <= 0) continue;
+        
+        Pattern p = Pattern.compile("(.*)=(.*)");
+        Matcher m = p.matcher(line);
+        String key = "", value = "";
+        if(m.find()) {
+          key = m.group(1);
+          value= m.group(2);
+        }
+
+        this.setVariable(key, value, "Restoring " + key + " to " + value);
+      }
+
+      Fixable fixable = this.getFixable(this.getErrorCode());
+      if(fixable != null)
+        fixable.fix(this);
+
+      this.addEvent(new Restart(0, this, "dump.settings", true));
+    } catch(FileNotFoundException e) {
+      System.out.println("Dump file not found");
+    } catch(ControllerException e) {}
+  }
+
+  public Fixable getFixable(int error) {
+    System.out.println(error);
+    this.setErrorCode(0);
+    switch(error) {
+      case 1:
+        return new FixWindow();
+      case 2:
+        return new PowerOn();
+    }
+
+    this.setErrorCode(error);
+    return null;
   }
 
   public String toString() {

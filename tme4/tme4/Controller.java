@@ -15,12 +15,16 @@ public abstract class Controller {
   protected Boolean _kill;
   protected TextArea logOutput;
 
+  protected ArrayList<Event> events;
+
   protected Object o;
   protected Method cb;
 
   protected int threadCount;
 
   public Controller(TextArea logOutput, Object o, Method cb) {
+    this.events = new ArrayList<Event>();
+
     this._running = true;
     this._kill = false;
 
@@ -31,6 +35,8 @@ public abstract class Controller {
   }
 
   public void addEvent(Event e) {
+    events.add(e);
+
     this._kill = false;
 
     Controller self = this;
@@ -42,6 +48,10 @@ public abstract class Controller {
     Thread t = new Thread(e);
     t.setUncaughtExceptionHandler(h);
     t.start();
+  }
+
+  public void removeEvent(Event e) {
+    events.remove(e);
   }
 
   public void addEvent(String name, long delayTime) {
@@ -101,11 +111,11 @@ public abstract class Controller {
     this.threadCount--;
   }
 
-  public void callback(String action) {
+  public void callback(Event e) {
     try {
-      this.cb.invoke(this.o, new Object[] { action });
-    } catch(Exception e) {
-      e.printStackTrace();
+      this.cb.invoke(this.o, new Object[] { e });
+    } catch(Exception ex) {
+      ex.printStackTrace();
     }
   }
 

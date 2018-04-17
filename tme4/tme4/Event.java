@@ -45,7 +45,7 @@ public abstract class Event implements Runnable {
     } finally {
       synchronized(this.controller) {
         this.controller.decrementThreads();
-        this.controller.callback(this.getClass().getName());
+        this.controller.callback(this);
       }
     }
   }
@@ -61,8 +61,12 @@ public abstract class Event implements Runnable {
     return this.curTime > 0;
   }
 
+  public long getTime() {
+    return this.curTime;
+  }
+
   public String serialize() {
-    return "Event=" + this.getClass().getName() + ",delay=" + this.delayTime;
+    return "event=" + this.getClass().getSimpleName() + ",delay=" + this.curTime;
   }
 
   public abstract void action() throws ControllerException;

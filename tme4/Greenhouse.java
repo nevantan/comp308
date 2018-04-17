@@ -48,7 +48,7 @@ public class Greenhouse extends Application {
 
     // Setup control system
     try {
-        Method handleEventComplete = Greenhouse.class.getMethod("handleEventComplete", new Class[] { String.class });
+        Method handleEventComplete = Greenhouse.class.getMethod("handleEventComplete", new Class[] { Event.class });
         this.controls = new GreenhouseControls(logArea, this, handleEventComplete);
     } catch(Exception e) {
         e.printStackTrace();
@@ -110,7 +110,14 @@ public class Greenhouse extends Application {
 
   @FXML
   void handleOpenDumpFileAction(ActionEvent event) {
-    System.out.println("Load dump file");
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Events File");
+    File file = fileChooser.showOpenDialog(stage);
+    
+    if(file != null) {
+        this.controls.restore(file);
+        //startButton.setDisable(false);
+    }
   }
 
   @FXML
@@ -164,8 +171,9 @@ public class Greenhouse extends Application {
     suspendButton.setDisable(false);
   }
 
-  public void handleEventComplete(String action) {
-    System.out.println("Callback: " + action);
+  public void handleEventComplete(Event e) {
+    this.controls.removeEvent(e);
+    //System.out.println("Callback: " + e.serialize());
   }
 
   @Override
