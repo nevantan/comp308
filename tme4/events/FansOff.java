@@ -9,6 +9,6 @@ public class FansOff extends Event {
 
   public void action() throws ControllerException {
     this.controller.setVariable("Fans", false);
-    System.out.println("Fans are now off");
+    this.controller.log("Fans are now off");
   }
 }

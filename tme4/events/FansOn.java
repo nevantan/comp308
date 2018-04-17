@@ -9,6 +9,6 @@ public class FansOn extends Event {
 
   public void action() throws ControllerException {
     this.controller.setVariable("Fans", true);
-    System.out.println("Fans are now on");
+    this.controller.log("Fans are now on");
   }
 }

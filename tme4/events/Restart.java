@@ -24,6 +24,7 @@ public class Restart extends Event {
       File file = new File(this.eventsFile);
 
       try {
+        this.controller.setVariable("Events File", this.eventsFile);
         Scanner sc = new Scanner(file);
 
         while(sc.hasNextLine()) {
@@ -50,8 +51,11 @@ public class Restart extends Event {
         if(this.temp) {
           file.delete();
         }
+      } catch(ControllerException e) {
+        
       } catch(FileNotFoundException e) {
         System.out.println("Settings file not found!");
+        this.controller.log("Settings file not found!");
       } finally {
         this.controller.running(true);
       }
